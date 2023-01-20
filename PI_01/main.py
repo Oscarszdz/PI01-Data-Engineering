@@ -31,7 +31,7 @@ async def read_items(platform: str, score: int, year: int):
     else:
         return {f'Platform not available: {platform}. Try again.'}
 
-# TODO 
+
 # The second highest scoring film for a given platform, based on title's alphabetical order.
 # 3.- get_second_score('amazon')
 @app.get("/second_score/{platform}")
@@ -44,7 +44,7 @@ async def read_item(platform: str):
         return response
 
 
-# Longest films according to year, platform and duration type
+# Longest film according to year, platform and duration type
 # 4.- get_longest('netflix', 'min', 2016)
 @app.get("/longest/{platform}/{duration_type}/{year}")
 async def read_items(platform: str, duration_type: str, year: int):

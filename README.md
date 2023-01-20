@@ -1,18 +1,16 @@
-<p align=center><img src=https://d31uz8lwfmyn8g.cloudfront.net/Assets/logo-henry-white-lg.png><p>
+<p align='left'><img src='https://assets.ubuntu.com/v1/ad9a02ac-ubuntu-orange.gif'height=75><p>
 
-# <h1 align=center> **PROYECTO INDIVIDUAL Nº1** </h1>
+<p align='center'><img src='https://www.python.org/static/community_logos/python-logo.png' height=75><p>
 
-# <h1 align=center>**`Data Engineering`**</h1>
+<p align='right'><img src='https://code.visualstudio.com/assets/images/code-stable.png' height=75 ><p>
 
-<p align="center">
-<img src="https://files.realpython.com/media/What-is-Data-Engineering_Watermarked.607e761a3c0e.jpg"  height=300>
-</p>
+# <h1 align='center'>**`Data Engineering`**</h1>
+# <h2 align='center'>**`FastAPI deployed in Deta`**</h2>
 
-¡Bienvenidos al primer proyecto individual de la etapa de labs! En esta ocasión, deberán hacer un trabajo situándose en el rol de un ***Data Engineer***.  
+
+<p align="center"><img src="https://files.realpython.com/media/What-is-Data-Engineering_Watermarked.607e761a3c0e.jpg"  height=300></p>
 
 <hr>  
-
-## **Descripción del problema (Contexto y rol a desarrollar)**
 
 ## Contexto
 
@@ -28,7 +26,8 @@ Como parte del equipo de data de una empresa, el área de análisis de datos le 
 
 
 
-## **Propuesta de trabajo (requerimientos de aprobación)**
+## **Propuesta de trabajo (requerimientos)**
+
 
 **`Transformaciones`**:  El analista de datos requiere estas, ***y solo estas***, transformaciones para sus datos:
 
@@ -43,11 +42,31 @@ Como parte del equipo de data de una empresa, el área de análisis de datos le 
 
 + El campo ***duration*** debe convertirse en dos campos: **`duration_int`** y **`duration_type`**. El primero será un integer y el segundo un string indicando la unidad de medición de duración: min (minutos) o season (temporadas)
 
+Las transformaciones se realizaron utilizando la funcion __[**etl(path_ETL, file_ETL)**](https://github.com/Oscarszdz/PI01-Data-Engineering/blob/main/ETL_Functions/etl_functions.py)__
+
 <br/>
 
-**`Desarrollo API`**:  Para disponibilizar los datos la empresa usa el framework ***FastAPI***. El analista de datos requiere consultar:
+**`Desarrollo API`**:  Para disponibilizar los datos la empresa usa el framework ***FastAPI***. 
+
+Las funciones utilizadas para realizar las consultas, se encuentran en el archivo [main.py](https://github.com/Oscarszdz/PI01-Data-Engineering/blob/main/PI_01/main.py), dentro de la carpeta PI_01 (carpeta con los archivos necesarios para el deployment de la app a través de [deta](https://www.deta.sh/). 
+
+El analista de datos requiere consultar:
 
 + Cantidad de veces que aparece una keyword en el título de peliculas/series, por plataforma
+```python
+# Number of times a keyword appears in movies/series Title's, by platform
+# 1.- get_word_count('netflix', 'love')
+@app.get("/word_count/{platform}/{word}")
+async def read_item(platform: str, word: str):
+    if platform in ['netflix', 'hulu', 'disney', 'amazon']:
+        df = pd.read_csv(platform+'.csv')
+        count = df['title'].str.count(word).sum()
+        response = dict(platform=platform, cantidad=str(count))
+        return response
+    else:
+        # return {'platform not available': platform}
+        return {f'Platform not available: {platform}. Try again.'}
+```
 
 + Cantidad de películas por plataforma con un puntaje mayor a XX en determinado año
 
@@ -59,16 +78,6 @@ Como parte del equipo de data de una empresa, el área de análisis de datos le 
 <br/>
 
 
-**`Deployment`**: La empresa suele usar [Deta](https://www.deta.sh/?ref=fastapi) (no necesita dockerizacion) para realizar el deploy de sus aplicaciones. Sin embargo, también puede usar [Railway](https://railway.app/) y [Render](https://render.com/docs/free#free-web-services) (necesitan dockerizacion).
-<br/>
-
-<br/>
-
-**`Video`**: El Tech Lead que le delegó esta tarea quiere darle un feedback sobre el trabajo realizado. Para esto, le pide que sintetice en un video de ***5 minutos*** su trabajo resaltando cómo ayuda el mismo a los analistas de datos.
-
-<sub> **Spoiler: Para lograr esto DEBE mostrarle al TL las consultas requeridas en funcionamiento desde la API**. <sub/>
-
-<br/>
 
 ## **Criterios de evaluación**
 
