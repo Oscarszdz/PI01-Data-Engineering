@@ -89,7 +89,7 @@ El desarrollo del projecto consta esencialmente de 3 pasos:
 
 - 1.- Deta
   - Creación de Projecto en Deta. A través del sitio web en la siguiente opción (el nombre del projectó sera HENRY): 
-  <p align="center"><img src="/home/osanchezd/Documents/HENRY/dataft06/PI01-Data-Engineering/_src/Screenshot from 2023-01-20 06-33-30.png"  height=300></p>
+  <p align="center"><img src="_src/Screenshot from 2023-01-20 06-33-30.png"  height=300></p>
   
   - Creación de Micros en Deta. Se realiza, utilizando la siguiente línea de código en CLI:
   ```python
