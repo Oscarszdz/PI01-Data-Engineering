@@ -112,16 +112,16 @@ El desarrollo del projecto consta esencialmente de 3 pasos:
 pip install fastapi
 ```
   - Creación del archivo *[main.py](https://github.com/Oscarszdz/PI01-Data-Engineering/blob/main/PI_01/main.py)*. En este archivo, se definen las funciones, que nos ayudarán a ejecutar las querys deseadas.
-  
+
   - Creación del archivo [requirements.txt](https://github.com/Oscarszdz/PI01-Data-Engineering/blob/main/PI_01/requirements.txt). Aquí, se indican las dependencias necesarias para desplegar la app.
 ```python
 # Contenido del archivo `requirements.txt`
 fastapi
 pandas
 ```
+# <h3 align='center'>**`2.- Carga de los datasets (Transformaciones)`**</h3>
 
-*`2. Carga de los datasets (Transformaciones)`*
-
+- 1.- Carga de los datasets
 ```python
 # Importamos las librerias requeridas
 import pandas as pd
@@ -150,7 +150,8 @@ for file in dir_list:
 La función [load_csv](https://github.com/Oscarszdz/PI01-Data-Engineering/blob/main/ETL_Functions/etl_functions.py#:~:text=def%20load_csv(path%2C%20file)%3A), guardará los archivos cargados en al ruta `../PI01-Data-Engineering/Datasets_for_ETL/`, para su carga en la siguient fase (ETL).
 <br/>
 
-## 2. Fase de transformación (ETL)
+- 2.- Fase de Transformación
+
 ```python
 # Definimos la ruta de búsqueda de nuestros archivos previamente cargados
 # de la base original, para ser transformados posteriormente
@@ -212,8 +213,17 @@ Asi mismo, se homologó `seasons` a `season` en el campo `duration_type`.
 
 Una vez realizado el proceso de ETL, con los requerimientos solicitados, procedemos a concatenar los 4 dataframes tratados **(`amazon`, `hulu`, `disney`, `netflix`)**. 
 
+- 3.- Guardado en directorio de deta `(../PI_01/file.csv)` para utilizarlo en el deploy. Esta acción, se ejecuta, a través de una de las líneas de código, dentro de la función [etl](https://github.com/Oscarszdz/PI01-Data-Engineering/blob/main/ETL_Functions/etl_functions.py#:~:text=netflix%20%3D%20netflix.to_csv(%27../PI01%2DData%2DEngineering/PI_01/netflix.csv%27%2C%20index%3DFalse)), como se muestra a continuación:
+
+```python
+netflix = netflix.to_csv('../PI01-Data-Engineering/PI_01/netflix.csv', index=False)
+```
+
 Para efectuar esta tarea, hacemos uso de la función [concat_df](https://github.com/Oscarszdz/PI01-Data-Engineering/blob/main/ETL_Functions/etl_functions.py#:~:text=def%20concat_df(path%2C%20dir)%3A).
 
+La concatenación de los distintos dataframes, se realiza con la función [concat_df](https://github.com/Oscarszdz/PI01-Data-Engineering/blob/main/ETL_Functions/etl_functions.py#:~:text=def%20concat_df(path%2C%20dir)%3A). Esta concatenación, nos permitirá dar respuesta a nuestra 5ta. query del projecto:
+
+*+ Cantidad de series y películas por rating*
 ```python
 # Listamos los dataframes tratados
 path_df_clean = '../PI01-Data-Engineering/PI_01/'
@@ -222,6 +232,87 @@ dir_list_clean = os.listdir(path_df_clean)
 concat_df(path_df_clean, dir_list_clean)
 ```
 
+# <h3 align='center'>**`3. Testeo de las querys`**</h3>
+
+- 1.- Ejecución de las querys definidas en el archivo *main.py* de FastAPI. Se reazlizarán a través de las funciones definidas en [main.py](https://github.com/Oscarszdz/PI01-Data-Engineering/blob/main/PI_01/main.py).
+
+
+Las consultas de datos que el analista requiere ejecutar, se ejecutan, especificamente, como se muestra a continuación:
+
++ Cantidad de veces que aparece una keyword en el título de peliculas/series, por plataforma
+```python
+# Number of times a keyword appears in movies/series Title's, by platform
+# 1.- get_word_count('netflix', 'love')
+@app.get("/word_count/{platform}/{word}")
+async def read_item(platform: str, word: str):
+    if platform in ['netflix', 'hulu', 'disney', 'amazon']:
+        df = pd.read_csv(platform+'.csv')
+        count = df['title'].str.count(word).sum()
+        response = dict(platform=platform, cantidad=str(count))
+        return response
+    else:
+        return {f'Platform not available: {platform}. Try again.'}
+```
+
++ Cantidad de películas por plataforma con un puntaje mayor a XX en determinado año
+```python
+# Number of films by platform with a score greater than XX in a given year
+# 2.- get_score_count('netflix', 85, 2010)
+@app.get("/score_count/{platform}/{score}/{year}")
+async def read_items(platform: str, score: int, year: int):
+    if platform in ['netflix', 'hulu', 'disney', 'amazon']:
+        df = pd.read_csv(platform+'.csv')
+        number = df[(df['score'] > score) & (df['release_year'] == year)]
+        number = len(number)
+        response = dict(platform=platform, cantidad=str(number))
+        return response
+    else:
+        return {f'Platform not available: {platform}. Try again.'}
+```
+
++ La segunda película con mayor score para una plataforma determinada, según el orden alfabético de los títulos.
+```python
+# The second highest scoring film for a given platform, based on title's alphabetical order.
+# 3.- get_second_score('amazon')
+@app.get("/second_score/{platform}")
+async def read_item(platform: str):
+    if platform in ['netflix', 'hulu', 'disney', 'amazon']:
+        df = pd.read_csv(platform+'.csv')
+        second = df.sort_values(by=['score', 'title'], ascending=[False, True]).iloc[1]['title']
+        score = df.sort_values(by=['score', 'title'], ascending=[False, True]).iloc[1]['score']       
+        response = dict(title=second, score=str(score))
+        return response
+```
+
++ Película que más duró según año, plataforma y tipo de duración
+```python
+# Longest film according to year, platform and duration type
+# 4.- get_longest('netflix', 'min', 2016)
+@app.get("/longest/{platform}/{duration_type}/{year}")
+async def read_items(platform: str, duration_type: str, year: int):
+    if platform in ['netflix', 'hulu', 'disney', 'amazon']:
+        df = pd.read_csv(platform+'.csv')
+        longest = df[(df['duration_type'] == duration_type) & (df['release_year'] == year)].sort_values(by=['duration_int'], ascending=False)[['title', 'duration_int','duration_type']].head(1)
+        response = longest.to_dict()
+        return response
+    else:
+        return {f'Platform not available: {platform}. Try again.'}
+```
+
++ Cantidad de series y películas por rating
+```python
+# Number of series and movies by rating
+# 5.- get_rating_count('18+')
+@app.get("/rating_count/{rating}")
+async def read_item(rating: str):
+    df = pd.read_csv('df_full.csv')
+    count = (df['rating'] == '18+').sum()
+    response = dict(rating=rating, cantidad=str(count))
+    return response
+```
+
+Las consultas requeridas, se pueden realizar a través del siguiente link:
+https://8t6o64.deta.dev/docs
 
 
 
