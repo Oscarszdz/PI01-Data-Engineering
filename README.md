@@ -53,20 +53,6 @@ Las funciones utilizadas para realizar las consultas, se encuentran en el archiv
 El analista de datos requiere consultar:
 
 + Cantidad de veces que aparece una keyword en el título de peliculas/series, por plataforma
-```python
-# Number of times a keyword appears in movies/series Title's, by platform
-# 1.- get_word_count('netflix', 'love')
-@app.get("/word_count/{platform}/{word}")
-async def read_item(platform: str, word: str):
-    if platform in ['netflix', 'hulu', 'disney', 'amazon']:
-        df = pd.read_csv(platform+'.csv')
-        count = df['title'].str.count(word).sum()
-        response = dict(platform=platform, cantidad=str(count))
-        return response
-    else:
-        # return {'platform not available': platform}
-        return {f'Platform not available: {platform}. Try again.'}
-```
 
 + Cantidad de películas por plataforma con un puntaje mayor a XX en determinado año
 
@@ -91,12 +77,12 @@ NOTA: Recuerde entregar el link de acceso al video. Puede alojarse en YouTube, D
 
 <br/>
 
-## **Fuente de datos**
+<!-- ## **Fuente de datos**
 
-+ Podrán encontrar los archivos con datos en la carpeta Datasets, en este mismo repositorio.<sup>*</sup>
++ Podrán encontrar los archivos con datos en la carpeta Datasets, en este mismo repositorio.<sup>*</sup> -->
 <br/>
 
-## **Material de apoyo**
+<!-- ## **Material de apoyo**
 
 Imagen Docker con Uvicorn/Guinicorn para aplicaciones web de alta performance:
 
@@ -110,11 +96,11 @@ FAST API Documentation:
 
 "Prolijidad" del codigo:
 
-+ https://pandas.pydata.org/docs/development/contributing_docstring.html
++ https://pandas.pydata.org/docs/development/contributing_docstring.html -->
 
 <br/>
 
-## **Deadlines importantes**
+<!-- ## **Deadlines importantes**
 
 + Apertura de formularios de entrega de proyectos: **Miercoles 18, 15:00hs gmt -3**
 
@@ -122,7 +108,7 @@ FAST API Documentation:
   
 + Demo por parte del estudiante: **Viernes 20, 16:00hs gmt-3** 
 
-(Se escogera entre l@s estudiantes aquel que represente de **forma global** todos los criterios de evaluacion esperados, para que sirva de inspiracion a sus compañer@s)
+(Se escogera entre l@s estudiantes aquel que represente de **forma global** todos los criterios de evaluacion esperados, para que sirva de inspiracion a sus compañer@s) -->
 
-## `Disclaimer`
-De parte del equipo de Henry se aclara y remarca que el fin de los proyectos propuestos es exclusivamente pedagógico, con el objetivo de realizar simular un entorno laboral, en el cual se trabajan diversas temáticas ajustadas a la realidad. No reflejan necesariamente la filosofía y valores de la organización. Además, Henry no alienta ni tampoco recomienda a los alumnos y/o cualquier persona leyendo los repositorios (y entregas de proyectos) que tomen acciones con base a los datos que pudieran o no haber recabado. Toda la información expuesta y resultados obtenidos en los proyectos nunca deben ser tomados en cuenta para la toma real de decisiones (especialmente en la temática de finanzas, salud, política, etc.).
+<!-- ## `Disclaimer`
+De parte del equipo de Henry se aclara y remarca que el fin de los proyectos propuestos es exclusivamente pedagógico, con el objetivo de realizar simular un entorno laboral, en el cual se trabajan diversas temáticas ajustadas a la realidad. No reflejan necesariamente la filosofía y valores de la organización. Además, Henry no alienta ni tampoco recomienda a los alumnos y/o cualquier persona leyendo los repositorios (y entregas de proyectos) que tomen acciones con base a los datos que pudieran o no haber recabado. Toda la información expuesta y resultados obtenidos en los proyectos nunca deben ser tomados en cuenta para la toma real de decisiones (especialmente en la temática de finanzas, salud, política, etc.). -->
