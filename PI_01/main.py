@@ -14,7 +14,6 @@ async def read_item(platform: str, word: str):
         response = dict(platform=platform, cantidad=str(count))
         return response
     else:
-        # return {'platform not available': platform}
         return {f'Platform not available: {platform}. Try again.'}
 
 

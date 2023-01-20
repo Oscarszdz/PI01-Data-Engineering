@@ -77,14 +77,48 @@ El desarrollo del projecto consta esencialmente de 3 pasos:
   - Creación del archivo *requirements.txt*
 
 **`2. Carga de los datasets (Transformaciones)`**
-- 1.- Carga
-- 2.- Transformaciones
+- 1.- Carga de los datasets
+- 2.- Fase de transformación
 - 3.- Guardado en directorio de deta para utilizarlo en el deploy
 
 **`3. Testeo de las querys`**
 - 1.- Ejecución de las querys definidas en el archivo *main.py* de FastAPI.
-<br/>
 
+# <h3 align='center'>**`1. Desarrollo de la API`**</h3>
+
+
+- 1.- Deta
+  - Creación de Projecto en Deta. A través del sitio web en la siguiente opción (el nombre del projectó sera HENRY): 
+  <p align="center"><img src="/home/osanchezd/Documents/HENRY/dataft06/PI01-Data-Engineering/_src/Screenshot from 2023-01-20 06-33-30.png"  height=300></p>
+  
+  - Creación de Micros en Deta. Se realiza, utilizando la siguiente línea de código en CLI:
+  ```python
+  deta new "my-micro" --project HENRY
+  ```
+  Para este caso en particular "my_micro" = PI_01.
+
+  Al ejecutarse el código anterior, se creará una carpeta con el nombre "my_micro". Más adelante, dentro de esa carpeta, colocaremos los datasets y además, crearemos el archivo *[requirements.txt](https://github.com/Oscarszdz/PI01-Data-Engineering/blob/main/PI_01/requirements.txt)*, en la cual indicaremos las dependencias necesarias para desplegar FastAPI en Deta.
+
+  Para desplegar los cambios (una vez que se hayan realizado), se ejecuta la siguiente línea de código en CLI:
+  ```python
+  deta deploy
+  ```
+
+  Una vez ejecutados los pasos anteriores, procedemos a instalar, y a la creación de los archivos requeridos por FastAPI para desplegar la app en Deta.
+
+- 2.- FastAPI
+- Instalación. Se realiza mediante el comando:
+```python
+pip install fastapi
+```
+  - Creación del archivo *[main.py](https://github.com/Oscarszdz/PI01-Data-Engineering/blob/main/PI_01/main.py)*. En este archivo, se definen las funciones, que nos ayudarán a ejecutar las querys deseadas.
+  
+  - Creación del archivo [requirements.txt](https://github.com/Oscarszdz/PI01-Data-Engineering/blob/main/PI_01/requirements.txt). Aquí, se indican las dependencias necesarias para desplegar la app.
+```python
+# Contenido del archivo `requirements.txt`
+fastapi
+pandas
+```
 
 *`2. Carga de los datasets (Transformaciones)`*
 
