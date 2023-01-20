@@ -76,35 +76,6 @@ def etl(path_ETL, file_ETL):
             netflix.fillna(value=0, inplace=True)
             netflix = netflix.to_csv('../PI01-Data-Engineering/PI_01/netflix.csv', index=False)
                     
-# TODO
-# def generating_id():
-    # return id
-
-# def rating_null_values():
-    # amazon['rating'].fillna('G', inplace=True)
-
-# def dates_formating()
-    # return
-
-# def lower_cases()
-#     return
-
-# def split_duration_column():
-    # return split_columns
-
-
-# def concat_df(path_ETL, file_ETL):
-#     path_ETL = '../PI01-Data-Engineering/Datasets_for_ETL/'
-#     dir_list_ETL = os.listdir(path_ETL)
-
-#     df_full = pd.DataFrame()
-#     for file_etl in dir_list_ETL:
-#         df_data = pd.read_csv(path_ETL+file_etl)
-#         df_full = pd.concat([df_full, df_data], ignore_index=True)
-#         # Dropping duplicates
-#         # Dropping NaN values
-#     df_full = df_full.to_csv('../PI01-Data-Engineering/PI_01/df_full.csv', index=False)
-#     print(f'Succesful load of {file_ETL}')
 
 def concat_df(path, dir):
     path = path
@@ -117,7 +88,3 @@ def concat_df(path, dir):
             df_full = pd.concat([df_full, df_data], ignore_index=True)
             print(f'Succesful load of {file}')
     df_full = df_full.to_csv('../PI01-Data-Engineering/PI_01/df_full.csv', index=False)
-
-
-# for cv in dir_list_clean:
-#     print(path_df_clean+cv)

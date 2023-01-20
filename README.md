@@ -1,8 +1,8 @@
-<p align='left'><img src='https://assets.ubuntu.com/v1/ad9a02ac-ubuntu-orange.gif'height=75><p>
+<p align='left'><img src='https://assets.ubuntu.com/v1/ad9a02ac-ubuntu-orange.gif'height=70><p>
 
-<p align='center'><img src='https://www.python.org/static/community_logos/python-logo.png' height=75><p>
+<p align='center'><img src='https://www.python.org/static/community_logos/python-logo.png' height=70><p>
+<p align='right'><img src='https://code.visualstudio.com/assets/images/code-stable.png' height=70 ><p>
 
-<p align='right'><img src='https://code.visualstudio.com/assets/images/code-stable.png' height=75 ><p>
 
 # <h1 align='center'>**`Data Engineering`**</h1>
 # <h2 align='center'>**`FastAPI deployed in Deta`**</h2>
@@ -42,7 +42,6 @@ Como parte del equipo de data de una empresa, el área de análisis de datos le 
 
 + El campo ***duration*** debe convertirse en dos campos: **`duration_int`** y **`duration_type`**. El primero será un integer y el segundo un string indicando la unidad de medición de duración: min (minutos) o season (temporadas)
 
-Las transformaciones se realizaron utilizando la funcion __[**etl(path_ETL, file_ETL)**](https://github.com/Oscarszdz/PI01-Data-Engineering/blob/main/ETL_Functions/etl_functions.py)__
 
 <br/>
 
@@ -63,52 +62,132 @@ El analista de datos requiere consultar:
 + Cantidad de series y películas por rating
 <br/>
 
-
-
-## **Criterios de evaluación**
-
-**`Código`**: Prolijidad de código, uso de clases y/o funciones, en caso de ser necesario, código comentado. 
-
-**`Repositorio`**: Nombres de archivo adecuados, uso de carpetas para ordenar los archivos, README.md presentando el proyecto y el trabajo realizado
-
-**`Cumplimiento`** de los requerimientos de aprobación indicados en el apartado `Propuesta de trabajo`
-
-NOTA: Recuerde entregar el link de acceso al video. Puede alojarse en YouTube, Drive o cualquier plataforma de almacenamiento. **Verificar que sea de acceso público**.
-
+# <h2 align='left'>**`DESARROLLO DEL PROJECTO`**</h2>
 <br/>
 
-<!-- ## **Fuente de datos**
+El desarrollo del projecto consta esencialmente de 3 pasos:
 
-+ Podrán encontrar los archivos con datos en la carpeta Datasets, en este mismo repositorio.<sup>*</sup> -->
+**`1. Desarrollo de la API`**:
+- 1.- Deta
+  - Creación de Projecto en Deta
+  - Creación de Micros en Deta
+- 2.- FastAPI
+- Instalación
+  - Creación del archivo *main.py*
+  - Creación del archivo *requirements.txt*
+
+**`2. Carga de los datasets (Transformaciones)`**
+- 1.- Carga
+- 2.- Transformaciones
+- 3.- Guardado en directorio de deta para utilizarlo en el deploy
+
+**`3. Testeo de las querys`**
+- 1.- Ejecución de las querys definidas en el archivo *main.py* de FastAPI.
 <br/>
 
-<!-- ## **Material de apoyo**
 
-Imagen Docker con Uvicorn/Guinicorn para aplicaciones web de alta performance:
+*`2. Carga de los datasets (Transformaciones)`*
 
-+ https://hub.docker.com/r/tiangolo/uvicorn-gunicorn-fastapi/ 
+```python
+# Importamos las librerias requeridas
+import pandas as pd
+import re
+import os
+from ETL_Functions.etl_functions import load_csv, etl, concat_df
+```
 
-+ https://github.com/tiangolo/uvicorn-gunicorn-fastapi-docker
+Las funciones `load_csv`, `etl` y `concat_df`, se encuentran definidas en el archivo [etl.functions.py](https://github.com/Oscarszdz/PI01-Data-Engineering/blob/main/ETL_Functions/etl_functions.py)
 
-FAST API Documentation:
+```python
+# Obtenemos la lista de todos los archivos .csv en nuestro directorio `Datasets`
+path = '../PI01-Data-Engineering/Datasets/'
+dir_list = os.listdir(path)
 
-+ https://fastapi.tiangolo.com/tutorial/
+print(f'Files stored in {path}:')
+for files in dir_list:  
+    print(files)  # imprimimos todos los archivos
 
-"Prolijidad" del codigo:
-
-+ https://pandas.pydata.org/docs/development/contributing_docstring.html -->
-
+# Hacemos uso de nuestra primera función para cargar los archivos .csv
+# Cargando los archivos .csv
+for file in dir_list:
+    if re.search(r'.csv', file):
+        load_csv(path, file)
+```
+La función [load_csv](https://github.com/Oscarszdz/PI01-Data-Engineering/blob/main/ETL_Functions/etl_functions.py#:~:text=def%20load_csv(path%2C%20file)%3A), guardará los archivos cargados en al ruta `../PI01-Data-Engineering/Datasets_for_ETL/`, para su carga en la siguient fase (ETL).
 <br/>
 
-<!-- ## **Deadlines importantes**
+## 2. Fase de transformación (ETL)
+```python
+# Definimos la ruta de búsqueda de nuestros archivos previamente cargados
+# de la base original, para ser transformados posteriormente
+path_ETL = '../PI01-Data-Engineering/Datasets_for_ETL/'
+dir_list_ETL = os.listdir(path_ETL)
 
-+ Apertura de formularios de entrega de proyectos: **Miercoles 18, 15:00hs gmt -3**
+# Obtenemos la lista de todos los archivos .csv en nuestro directorio `Datasets_for_ETL
+print(f'Files stored in {path_ETL}:')
+for files_etl in dir_list_ETL:  # imprime todo los archivos
+    print(files_etl)
+````
 
-+ Cierre de formularios de entrega de proyectos: **Viernes 20, 12:00hs gmt-3**
-  
-+ Demo por parte del estudiante: **Viernes 20, 16:00hs gmt-3** 
+Con ayuda de la función [etl](https://github.com/Oscarszdz/PI01-Data-Engineering/blob/main/ETL_Functions/etl_functions.py#:~:text=def%20etl(path_ETL%2C%20file_ETL)) aplicamos las siguientes transformaciones:
 
-(Se escogera entre l@s estudiantes aquel que represente de **forma global** todos los criterios de evaluacion esperados, para que sirva de inspiracion a sus compañer@s) -->
+*1.- Generar campo **`id`**: Cada id se compondrá de la primera letra del nombre de la plataforma, seguido del show_id ya presente en los datasets (ejemplo para títulos de Amazon = **`as123`**)*
+```python
+# Ejemplo:
+# Parte del código de la funcion `etl` para la generación del `id`
+for files_etl in dir_list_ETL:
+        if re.search(r'amazon', files_etl):
+            amazon = pd.read_csv(path_ETL+files_etl)
+            amazon['id'] = 'a' + amazon['show_id']
+```
 
-<!-- ## `Disclaimer`
-De parte del equipo de Henry se aclara y remarca que el fin de los proyectos propuestos es exclusivamente pedagógico, con el objetivo de realizar simular un entorno laboral, en el cual se trabajan diversas temáticas ajustadas a la realidad. No reflejan necesariamente la filosofía y valores de la organización. Además, Henry no alienta ni tampoco recomienda a los alumnos y/o cualquier persona leyendo los repositorios (y entregas de proyectos) que tomen acciones con base a los datos que pudieran o no haber recabado. Toda la información expuesta y resultados obtenidos en los proyectos nunca deben ser tomados en cuenta para la toma real de decisiones (especialmente en la temática de finanzas, salud, política, etc.). -->
+*2.- Los valores nulos del campo rating deberán reemplazarse por el string “**`G`**” (corresponde al maturity rating: “general for all audiences”*
+```python
+# Ejemplo:
+# Parte del código de la funcion `etl` para el reemplazo de valores nulos por `G`
+amazon['rating'].fillna('G', inplace=True)
+```
+
+*3.- De haber fechas, deberán tener el formato **`AAAA-mm-dd`***
+```python
+# Ejemplo:
+# Parte del código de la funcion `etl` para el formato de la fecha
+amazon['date'] = pd.to_datetime(amazon['date_added'])
+```
+
+*4.- Los campos de texto deberán estar en **minúsculas**, sin excepciones*
+```python
+# Ejemplo:
+# Parte del código de la funcion `etl` para modificar los campos de texto a minúsculas.
+for i in amazon.select_dtypes(include='object'):
+                amazon[i] = amazon[i].str.lower()
+```
+
+*5.- El campo ***duration*** debe convertirse en dos campos: **`duration_int`** y **`duration_type`**. El primero será un integer y el segundo un string indicando la unidad de medición de duración: min (minutos) o season (temporadas)*
+```python
+# Ejemplo:
+# Parte del código de la funcion `etl` para modificar el campo `duration` a `duration_int` y `duration_type`
+duration = amazon['duration'].str.split(" ", n=1, expand=True)
+amazon['duration_int'] = duration[0]
+amazon['duration_type'] = duration[1]
+amazon['duration_type'] = amazon['duration_type'].str.replace('seasons', 'season')
+amazon['duration_int'] = amazon['duration_int'].astype(int)
+```
+
+Asi mismo, se homologó `seasons` a `season` en el campo `duration_type`.
+
+Una vez realizado el proceso de ETL, con los requerimientos solicitados, procedemos a concatenar los 4 dataframes tratados **(`amazon`, `hulu`, `disney`, `netflix`)**. 
+
+Para efectuar esta tarea, hacemos uso de la función [concat_df](https://github.com/Oscarszdz/PI01-Data-Engineering/blob/main/ETL_Functions/etl_functions.py#:~:text=def%20concat_df(path%2C%20dir)%3A).
+
+```python
+# Listamos los dataframes tratados
+path_df_clean = '../PI01-Data-Engineering/PI_01/'
+dir_list_clean = os.listdir(path_df_clean)
+
+concat_df(path_df_clean, dir_list_clean)
+```
+
+
+
+
